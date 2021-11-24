@@ -1,6 +1,7 @@
 package com.example.inflearnjparestapi.domain;
 
 import com.example.inflearnjparestapi.domain.item.Item;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
