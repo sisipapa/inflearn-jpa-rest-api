@@ -5,6 +5,7 @@ import com.example.inflearnjparestapi.domain.Order;
 import com.example.inflearnjparestapi.domain.OrderStatus;
 import com.example.inflearnjparestapi.repository.OrderRepository;
 import com.example.inflearnjparestapi.repository.OrderSearch;
+import com.example.inflearnjparestapi.repository.OrderSimpleQueryDto;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -93,6 +94,18 @@ public class OrderSimpleApiController {
                 .collect(Collectors.toList());
 
         return result;
+    }
+
+    /**
+     * 일반적인 SQL을 사용할 때 처럼 원하는 값을 선택해서 조회
+     * new 명령어를 사용해서 JPQL의 결과를 DTO로 즉시 변환
+     * SELECT 절에서 원하는 데이터를 직접 선택하므로 DB 애플리케이션 네트웍 용량 최적화(생각보다미비)
+     * 리포지토리 재사용성 떨어짐, API 스펙에 맞춘 코드가 리포지토리에 들어가는 단점
+     * @return
+     */
+    @GetMapping("/api/v4/simple-orders")
+    public List<OrderSimpleQueryDto> ordersV4(){
+        return orderRepository.findOrderDtos();
     }
 
     @Data
