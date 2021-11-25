@@ -6,6 +6,8 @@ import com.example.inflearnjparestapi.domain.OrderItem;
 import com.example.inflearnjparestapi.domain.OrderStatus;
 import com.example.inflearnjparestapi.repository.OrderRepository;
 import com.example.inflearnjparestapi.repository.OrderSearch;
+import com.example.inflearnjparestapi.repository.order.query.OrderQueryDto;
+import com.example.inflearnjparestapi.repository.order.query.OrderQueryRepository;
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ import java.util.stream.Collectors;
 public class OrderApiController {
 
     private final OrderRepository orderRepository;
+    private final OrderQueryRepository orderQueryRepository;
 
     /**
      * Entity에 JsonIgnore 설정을 안해서 현재는 오류발생 강의 내용만 참고하자!!
@@ -74,7 +77,10 @@ public class OrderApiController {
     @GetMapping("/api/v3.1/orders")
     public List<OrderDto> orderV3_page(@RequestParam(value = "offset", defaultValue = "0") int offset,
                                        @RequestParam(value = "limit", defaultValue = "100") int limit){
-
+        
+        // 1. toOne관계는 fetch join을 하고 페이징처리
+        // 2. application.yml default_batch_fetch_size 설정
+        // 3. toMany관계는 LAZY 조회! => default_batch_fetch_size 설정으로 Entity마다 1회씩 쿼리가 더 수행
         List<Order> orders = orderRepository.findAllWithMemberDelivery(offset, limit);
 
         List<OrderDto> result = orders.stream()
@@ -82,6 +88,15 @@ public class OrderApiController {
                 .collect(Collectors.toList());
 
         return result;
+    }
+
+    /**
+     * Entity가 아닌 화면에 종속된 쿼리들은 XXXQueryDto로 분리해서 조회.
+     * @return
+     */
+    @GetMapping("/api/v4/orders")
+    public List<OrderQueryDto> orderV4(){
+        return orderQueryRepository.findOrderQueryDtos();
     }
 
     @Getter
