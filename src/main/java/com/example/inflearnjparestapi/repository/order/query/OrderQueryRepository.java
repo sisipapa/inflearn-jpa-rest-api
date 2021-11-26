@@ -5,6 +5,8 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -29,6 +31,18 @@ public class OrderQueryRepository {
     }
 
     /**
+     * 1:N 관계(컬렉션)를 제외한 나머지를 한번에 조회
+     */
+    private List<OrderQueryDto> findOrders() {
+        return em.createQuery("select " +
+                        "new com.example.inflearnjparestapi.repository.order.query.OrderQueryDto(o.id, m.name, o.orderDate, o.status, d.address) " +
+                        "from Order o " +
+                        "join o.member m " +
+                        "join o.delivery d ", OrderQueryDto.class)
+                .getResultList();
+    }
+
+    /**
      * 1:N 관계인 orderItems 조회
      */
     private List<OrderItemQueryDto> findOrderItems(Long orderId) {
@@ -42,15 +56,51 @@ public class OrderQueryRepository {
     }
 
     /**
-     * 1:N 관계(컬렉션)를 제외한 나머지를 한번에 조회
+     * Query : 루트1번, 컬렉션 1번
+     *
+     * @return
      */
-    private List<OrderQueryDto> findOrders() {
+    public List<OrderQueryDto> findAllByDto_optimization() {
+        List<OrderQueryDto> result = findOrders();
+
+        List<Long> orderIds = findOrderIds(result);
+
+        List<OrderItemQueryDto> orderItmes = findOrderItems(orderIds);
+
+        Map<Long, List<OrderItemQueryDto>> orderItemMap = orderItmes.stream()
+                .collect(Collectors.groupingBy(orderItemQueryDto -> orderItemQueryDto.getOrderId()));
+
+        result.forEach(o -> o.setOrderItems(orderItemMap.get(o.getOrderId())));
+
+        return result;
+    }
+
+    private List<OrderItemQueryDto> findOrderItems(List<Long> orderIds) {
         return em.createQuery("select " +
-                        "new com.example.inflearnjparestapi.repository.order.query.OrderQueryDto(o.id, m.name, o.orderDate, o.status, d.address) " +
+                        "new com.example.inflearnjparestapi.repository.order.query.OrderItemQueryDto(oi.order.id, i.name, oi.orderPrice, oi.count) " +
+                        "from OrderItem oi " +
+                        "join oi.item i " +
+                        "where oi.order.id in :orderIds", OrderItemQueryDto.class)
+                .setParameter("orderIds", orderIds)
+                .getResultList();
+    }
+
+    private List<Long> findOrderIds(List<OrderQueryDto> result) {
+        return result.stream()
+                .map(o -> o.getOrderId())
+                .collect(Collectors.toList());
+    }
+
+    public List<OrderFlatDto> findAllBy_flat() {
+        return em.createQuery(
+                "select " +
+                        "new com.example.inflearnjparestapi.repository.order.query.OrderFlatDto(o.id, m.name, o.orderDate, o.status, d.address, i.name, oi.orderPrice, oi.count) " +
                         "from Order o " +
                         "join o.member m " +
-                        "join o.delivery d ", OrderQueryDto.class)
-                .getResultList();
+                        "join o.delivery d " +
+                        "join o.orderItems oi " +
+                        "join oi.item i", OrderFlatDto.class
+        ).getResultList();
     }
 }
 

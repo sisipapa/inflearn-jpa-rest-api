@@ -1,7 +1,6 @@
-package com.example.inflearnjparestapi.repository;
+package com.example.inflearnjparestapi.repository.simple.query;
 
 import com.example.inflearnjparestapi.domain.Address;
-import com.example.inflearnjparestapi.domain.Order;
 import com.example.inflearnjparestapi.domain.OrderStatus;
 import lombok.Data;
 
