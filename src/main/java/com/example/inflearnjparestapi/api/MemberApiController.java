@@ -24,6 +24,8 @@ public class MemberApiController {
      * dev에서 push
      * dev 수정
      * dev작업1
+     * 수정
+     * dev-local생성
      * @return
      */
     @GetMapping("/api/v1/members")
