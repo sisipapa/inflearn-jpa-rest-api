@@ -21,7 +21,8 @@ public class MemberApiController {
 
     /**
      * Entity에 프레젠테이션 영역을 컨트롤 하기 위한 조건들이 들어가게 된다.
-     * 수정
+     * 수정-local
+     * dev2생성
      * @return
      */
     @GetMapping("/api/v1/members")
