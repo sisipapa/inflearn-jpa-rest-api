@@ -26,6 +26,7 @@ public class MemberApiController {
      * R1
      * R2
      * R3
+     * R4
      * @return
      */
     @GetMapping("/api/v1/members")
