@@ -26,6 +26,9 @@ public class MemberApiController {
      * dev작업1
      * 수정
      * dev-local생성
+     * 수정-local
+     * dev2생성
+     * dev2작업1
      * @return
      */
     @GetMapping("/api/v1/members")
