@@ -31,6 +31,7 @@ public class OrderApiController {
 
     /**
      * Entity에 JsonIgnore 설정을 안해서 현재는 오류발생 강의 내용만 참고하자!!
+     * M1
      *
      * @return
      */
