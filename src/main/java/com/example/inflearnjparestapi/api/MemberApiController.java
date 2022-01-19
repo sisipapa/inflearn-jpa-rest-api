@@ -25,6 +25,7 @@ public class MemberApiController {
      * dev4생성
      * R1
      * R2
+     * R3
      * @return
      */
     @GetMapping("/api/v1/members")
