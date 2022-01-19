@@ -69,7 +69,7 @@ public class OrderApiController {
     }
 
     /**
-     * ToOne(oneToOne, manyToOne)관계는 모두 fetch join 으로 조회
+     * ToOne(oneToOne, manyToOne)관계는 모두 fetch join 으로 조회1
      * 컬렉션은 지연로딩으로 조회한다.
      * 지연로딩 성능 최적화를 위해 hibernate.default_batch_fetch_size, @BatchSize를 적용
      *  hibernate.default_batch_fetch_size : Global설정
