@@ -124,14 +124,17 @@ public class OrderRepository {
         // jpql의 distinct는 JPA에서 Order의 id가 동일하면 하나의 Object만 반환해준다.
         // 1. DB distinct 실행
         // 2. Root Entity의 동일한 id키 값에 대한 중복을 제거해서 반환해준다.
+        // JPA의 distinct는 SQL에 distinct를 추가하고, 더해서 같은 엔티티가
+        //조회되면, 애플리케이션에서 중복을 걸러준다. 이 예에서 order가 컬렉션 페치 조인 때문에 중복 조회 되는
+        //것을 막아준다.
         return em.createQuery(
                         "select distinct o from Order o" +
                                 " join fetch o.member m" +
                                 " join fetch o.delivery d" +
                                 " join fetch o.orderItems oi" +
                                 " join fetch oi.item i", Order.class)
-                .setFirstResult(1)
-                .setMaxResults(100)
+                .setFirstResult(0)
+                .setMaxResults(5)
                 .getResultList();
     }
 

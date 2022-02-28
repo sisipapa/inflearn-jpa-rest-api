@@ -10,6 +10,7 @@ import com.example.inflearnjparestapi.repository.order.query.OrderFlatDto;
 import com.example.inflearnjparestapi.repository.order.query.OrderItemQueryDto;
 import com.example.inflearnjparestapi.repository.order.query.OrderQueryDto;
 import com.example.inflearnjparestapi.repository.order.query.OrderQueryRepository;
+import com.example.inflearnjparestapi.repository.querydsl.OrderQuerydslRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +29,7 @@ public class OrderApiController {
 
     private final OrderRepository orderRepository;
     private final OrderQueryRepository orderQueryRepository;
+    private final OrderQuerydslRepository orderQuerydslRepository;
 
     /**
      * Entity에 JsonIgnore 설정을 안해서 현재는 오류발생 강의 내용만 참고하자!!
@@ -50,9 +52,34 @@ public class OrderApiController {
         return all;
     }
 
+    @GetMapping("/api/v1/orders-q")
+    public List<Order> orderV1q(){
+        List<Order> orders = orderQuerydslRepository.findAllByString(new OrderSearch());
+
+        orders.stream().forEach(order -> {
+            order.getMember().getName();
+            order.getDelivery().getAddress();
+
+            List<OrderItem> orderItems = order.getOrderItems();
+            orderItems.stream().forEach(oi -> oi.getItem().getName());
+        });
+
+        return orders;
+    }
+
     @GetMapping("/api/v2/orders")
     public List<OrderDto> orderV2(){
         List<Order> orders = orderRepository.findAllByString(new OrderSearch());
+        List<OrderDto> result = orders.stream()
+                .map(OrderDto::new)
+                .collect(toList());
+
+        return result;
+    }
+
+    @GetMapping("/api/v2/orders-q")
+    public List<OrderDto> orderV2q(){
+        List<Order> orders = orderQuerydslRepository.findAllByString(new OrderSearch());
         List<OrderDto> result = orders.stream()
                 .map(OrderDto::new)
                 .collect(toList());
@@ -65,6 +92,16 @@ public class OrderApiController {
         List<Order> orders = orderRepository.findAllWithItem();
         List<OrderDto> result = orders.stream()
                 .distinct()
+                .map(OrderDto::new)
+                .collect(toList());
+
+        return result;
+    }
+
+    @GetMapping("/api/v3/orders-q")
+    public List<OrderDto> orderV3q(){
+        List<Order> orders = orderQuerydslRepository.findAllWithItem();
+        List<OrderDto> result = orders.stream()
                 .map(OrderDto::new)
                 .collect(toList());
 
@@ -96,6 +133,18 @@ public class OrderApiController {
         return result;
     }
 
+    @GetMapping("/api/v3.1/orders-q")
+    public List<OrderDto> orderV3_page(@RequestParam(value = "offset", defaultValue = "0") Integer offset,
+                                       @RequestParam(value = "limit", defaultValue = "10") Integer limit){
+
+        List<Order> orders = orderQuerydslRepository.findAllWithMemberDelivery(offset, limit);
+        List<OrderDto> result = orders.stream()
+                .map(OrderDto::new)
+                .collect(toList());
+
+        return result;
+    }
+
     /**
      * Entity가 아닌 화면에 종속된 쿼리들은 XXXQueryDto로 분리해서 조회.
      * @return
@@ -103,6 +152,11 @@ public class OrderApiController {
     @GetMapping("/api/v4/orders")
     public List<OrderQueryDto> orderV4(){
         return orderQueryRepository.findOrderQueryDtos();
+    }
+
+    @GetMapping("/api/v4/orders-q")
+    public List<OrderQueryDto> orderV4q(){
+        return orderQuerydslRepository.findOrderQueryDtos();
     }
 
     @GetMapping("/api/v5/orders")
