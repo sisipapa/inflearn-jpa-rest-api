@@ -11,13 +11,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.example.inflearnjparestapi.domain.QDelivery.delivery;
 import static com.example.inflearnjparestapi.domain.QMember.member;
 import static com.example.inflearnjparestapi.domain.QOrder.order;
 import static com.example.inflearnjparestapi.domain.QOrderItem.orderItem;
 import static com.example.inflearnjparestapi.domain.item.QItem.item;
+import static java.util.stream.Collectors.groupingBy;
 import static org.springframework.util.StringUtils.hasText;
 
 
@@ -87,6 +90,11 @@ public class OrderQuerydslRepository {
         return orders;
     }
 
+    /**
+     * Query : 루트1번, 컬렉션 N번
+     *
+     * @return
+     */
     public List<OrderQueryDto> findOrderQueryDtos(){
         List<OrderQueryDto> orders = findOrders();
 
@@ -96,6 +104,33 @@ public class OrderQuerydslRepository {
         });
 
         return orders;
+    }
+    
+    /**
+     * Query : 루트1번, 컬렉션 1번
+     *
+     * @return
+     */
+    public List<OrderQueryDto> findAllByDto_optimization(){
+        List<OrderQueryDto> orders = findOrders();
+
+        List<Long> orderIds = findOrderIds(orders);
+
+        List<OrderItemQueryDto> orderItmes = findOrderItems(orderIds);
+
+        Map<Long, List<OrderItemQueryDto>> orderItemMap = orderItmes.stream()
+                .collect(groupingBy(OrderItemQueryDto::getOrderId));
+
+        orders.forEach(o -> o.setOrderItems(orderItemMap.get(o.getOrderId())));
+
+        return orders;
+    }
+
+
+    private List<Long> findOrderIds(List<OrderQueryDto> orders) {
+        return orders.stream()
+                .map(o -> o.getOrderId())
+                .collect(Collectors.toList());
     }
 
     private List<OrderQueryDto> findOrders() {
@@ -127,6 +162,21 @@ public class OrderQuerydslRepository {
                 .from(orderItem)
                 .join(orderItem.item, item)
                 .where(orderItem.order.id.eq(orderId))
+                .fetch();
+    }
+
+    private List<OrderItemQueryDto> findOrderItems(List<Long> orderIds) {
+        return jpaQueryFactory
+                .select(
+                        Projections.constructor(OrderItemQueryDto.class
+                                , orderItem.order.id
+                                , item.name
+                                , orderItem.orderPrice
+                                , orderItem.count)
+                )
+                .from(orderItem)
+                .join(orderItem.item, item)
+                .where(orderItem.order.id.in(orderIds))
                 .fetch();
     }
 
