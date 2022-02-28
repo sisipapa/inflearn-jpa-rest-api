@@ -17,6 +17,8 @@ spring:
 #        show_sql: true
         format_sql: true
         default_batch_fetch_size: 1000 #최적화 옵션
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+
 
 #logging.level:
 #  org.hibernate.SQL: debug

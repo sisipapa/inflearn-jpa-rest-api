@@ -1,6 +1,7 @@
 package com.example.inflearnjparestapi;
 
 import com.example.inflearnjparestapi.domain.*;
+import com.example.inflearnjparestapi.domain.item.Album;
 import com.example.inflearnjparestapi.domain.item.Book;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -28,6 +29,7 @@ public class InitDb {
     public void init() {
         initService.dbInit1();
         initService.dbInit2();
+        initService.dbInit3();
     }
 
     @Component
@@ -74,6 +76,24 @@ public class InitDb {
             em.persist(order);
         }
 
+        public void dbInit3() {
+            Member member = createMember("userC", "부천", "3", "3333");
+            em.persist(member);
+
+            Album album1 = createAlbum("GOD1집", 15000, 200);
+            em.persist(album1);
+
+            Album album2 = createAlbum("HOT1집", 14000, 300);
+            em.persist(album2);
+
+            OrderItem orderItem1 = OrderItem.createOrderItem(album1, 20000, 3);
+            OrderItem orderItem2 = OrderItem.createOrderItem(album2, 40000, 4);
+
+            Delivery delivery = createDelivery(member);
+            Order order = Order.createOrder(member, delivery, orderItem1, orderItem2);
+            em.persist(order);
+        }
+
         private Member createMember(String name, String city, String street, String zipcode) {
             Member member = new Member();
             member.setName(name);
@@ -87,6 +107,14 @@ public class InitDb {
             book1.setPrice(price);
             book1.setStockQuantity(stockQuantity);
             return book1;
+        }
+
+        private Album createAlbum(String name, int price, int stockQuantity) {
+            Album album = new Album();
+            album.setName(name);
+            album.setPrice(price);
+            album.setStockQuantity(stockQuantity);
+            return album;
         }
 
         private Delivery createDelivery(Member member) {
