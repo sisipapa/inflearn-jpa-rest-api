@@ -112,15 +112,16 @@ public class OrderQuerydslRepository {
      * @return
      */
     public List<OrderQueryDto> findAllByDto_optimization(){
+        // 1. toOne fetch join
         List<OrderQueryDto> orders = findOrders();
-
+        // 2. toMany 조회를 위한 키값 List
         List<Long> orderIds = findOrderIds(orders);
-
+        // 3. 키값 List를 통해 toMany 데이터 조회
         List<OrderItemQueryDto> orderItmes = findOrderItems(orderIds);
-
+        // 4. java groupingBy로 그룹핑
         Map<Long, List<OrderItemQueryDto>> orderItemMap = orderItmes.stream()
                 .collect(groupingBy(OrderItemQueryDto::getOrderId));
-
+        // 5.그룹핑한 목록 forEach로 set
         orders.forEach(o -> o.setOrderItems(orderItemMap.get(o.getOrderId())));
 
         return orders;
