@@ -37,12 +37,4 @@ public class OrderQueryDto {
         this.address = address;
         this.orderItems = orderItems;
     }
-
-    @QueryProjection
-    public OrderQueryDto(Long orderId, String name, LocalDateTime orderDate, OrderStatus orderStatus){
-        this.orderId = orderId;
-        this.name = name;
-        this.orderDate = orderDate;
-        this.orderStatus = orderStatus;
-    }
 }
