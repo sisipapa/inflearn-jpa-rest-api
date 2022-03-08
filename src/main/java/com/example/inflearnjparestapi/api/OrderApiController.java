@@ -164,6 +164,11 @@ public class OrderApiController {
         return orderQueryRepository.findAllByDto_optimization();
     }
 
+    @GetMapping("/api/v5/orders-q")
+    public List<OrderQueryDto> orderV5q(){
+        return orderQuerydslRepository.findAllByDto_optimization();
+    }
+
     @GetMapping("/api/v6/orders")
     public List<OrderQueryDto> orderV6(){
         List<OrderFlatDto> flats = orderQueryRepository.findAllBy_flat();
