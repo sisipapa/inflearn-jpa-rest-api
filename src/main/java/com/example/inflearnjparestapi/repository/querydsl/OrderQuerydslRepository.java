@@ -4,6 +4,7 @@ import com.example.inflearnjparestapi.domain.Order;
 import com.example.inflearnjparestapi.repository.OrderSearch;
 import com.example.inflearnjparestapi.repository.order.query.OrderItemQueryDto;
 import com.example.inflearnjparestapi.repository.order.query.OrderQueryDto;
+import com.example.inflearnjparestapi.repository.order.query.QOrderQueryDto;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -101,8 +102,8 @@ public class OrderQuerydslRepository {
     private List<OrderQueryDto> findOrders() {
         return jpaQueryFactory
                 .select(
-                        Projections.constructor(OrderQueryDto.class
-                                , order.id
+                        new QOrderQueryDto(
+                                  order.id
                                 , member.name
                                 , order.orderDate
                                 , order.status

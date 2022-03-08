@@ -2,6 +2,7 @@ package com.example.inflearnjparestapi.repository.order.query;
 
 import com.example.inflearnjparestapi.domain.Address;
 import com.example.inflearnjparestapi.domain.OrderStatus;
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -19,6 +20,7 @@ public class OrderQueryDto {
     private Address address;
     private List<OrderItemQueryDto> orderItems;
 
+    @QueryProjection
     public OrderQueryDto(Long orderId, String name, LocalDateTime orderDate, OrderStatus orderStatus, Address address){
         this.orderId = orderId;
         this.name = name;
@@ -36,5 +38,11 @@ public class OrderQueryDto {
         this.orderItems = orderItems;
     }
 
-
+    @QueryProjection
+    public OrderQueryDto(Long orderId, String name, LocalDateTime orderDate, OrderStatus orderStatus){
+        this.orderId = orderId;
+        this.name = name;
+        this.orderDate = orderDate;
+        this.orderStatus = orderStatus;
+    }
 }
