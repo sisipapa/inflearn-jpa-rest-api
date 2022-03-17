@@ -80,7 +80,7 @@ public class OrderQuerydslRepository {
         List<Order> orders = jpaQueryFactory
                 .selectFrom(order)
                 .distinct()
-                .join(order.member, member).fetchJoin()
+                .join(order.member, member).fetchJoin()         // fetchJoin()
                 .join(order.delivery, delivery).fetchJoin()
                 .join(order.orderItems, orderItem).fetchJoin()
                 .join(orderItem.item, item).fetchJoin()
