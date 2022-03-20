@@ -34,6 +34,7 @@ public class OrderSimpleApiController {
      * 2. 양방향 연관관계가 걸린 Entity들때문에 무한참조가 되어 에러가 발생
      *  -> xToOne 관계의 Entity에 JsonIgnore를 걸어서 해결은 가능하지만 좋은 방법은 아니다.
      * 3. API의 요청파라미터(바디)나 응답결과로 Entity를 바로 사용하는 것은 좋지않다.
+     * 
      * @return
      */
     @GetMapping("/api/v1/simple-orders")
