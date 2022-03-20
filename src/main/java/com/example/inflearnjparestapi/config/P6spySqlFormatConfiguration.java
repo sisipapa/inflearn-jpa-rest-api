@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.Locale;
 
 public class P6spySqlFormatConfiguration implements MessageFormattingStrategy {
+
     @Override
     public String formatMessage(int connectionId, String now, long elapsed, String category, String prepared, String sql, String url) {
         sql = formatSql(category, sql);
@@ -32,7 +33,6 @@ public class P6spySqlFormatConfiguration implements MessageFormattingStrategy {
             }
             sql = "|\nHeFormatSql(P6Spy sql,Hibernate format):"+ sql;
         }
-
         return sql;
     }
 }
