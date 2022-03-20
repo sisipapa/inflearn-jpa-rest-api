@@ -27,6 +27,13 @@ Content-Type: application/json
   "name": "hello4"
 }
 
+###
+POST http://localhost:8080/api/v3/members
+Content-Type: application/json
+
+{
+  "name": "hello4"
+}
 
 
 
